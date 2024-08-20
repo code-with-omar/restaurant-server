@@ -47,7 +47,13 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-
+        app.get('/carts', async (req, res) => {
+            const email=req.query.email
+            const query={email:email}
+            const cursor = cartsCollection.find(query);
+            const result = await cursor.toArray()
+            res.send(result);
+        })
         // Cartts collection
         app.post('/carts', async (req, res) => {
             const cartItem = req.body;
