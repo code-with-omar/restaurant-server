@@ -48,7 +48,7 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-        // user related api
+        // users related api
         app.get('/users', async (req, res) => {
             const cursor = userCollection.find();
             const result = await cursor.toArray()
@@ -66,6 +66,13 @@ async function run() {
             const result = await userCollection.insertOne(user);
             res.send(result);
         });
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await userCollection.deleteOne(query)
+            res.send(result)
+        })
+        //
         app.get('/carts', async (req, res) => {
             const email = req.query.email
             const query = { email: email }
