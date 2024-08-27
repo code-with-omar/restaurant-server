@@ -37,7 +37,25 @@ async function run() {
             const user = req.body;
             const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
             res.send({ token });
-          })
+        })
+        //middle for jwt
+        const verifyToken = (req, res, next) => {
+            console.log(req.headers.authorization)
+            // console.log('Inside verify token', req.body)
+            if (!req.headers.authorization) {
+                return res.status(401).send({ message: 'forbidden access' })
+            }
+            const token = req.headers.authorization.split(' ')[1]
+            console.log(req.headers.authorization)
+            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+                if (err) {
+                    return res.status(401).send({ message: 'forbidden access' })
+                }
+                req.decoded = decoded
+                next()
+            })
+            // next()
+        }
         //Get review
         app.get('/reviews', async (req, res) => {
             const cursor = reviewCollection.find();
@@ -59,7 +77,7 @@ async function run() {
         // users related api
 
         app.post('/users', async (req, res) => {
-            const user = req.body;
+
             // insert email if user doesnt exists: 
             // you can do this many ways (1. email unique, 2. upsert 3. simple checking)
             const query = { email: user.email }
@@ -70,7 +88,8 @@ async function run() {
             const result = await userCollection.insertOne(user);
             res.send(result);
         });
-        app.get('/users', async (req, res) => {
+        app.get('/users',verifyToken, async (req, res) => {
+            
             const cursor = userCollection.find();
             const result = await cursor.toArray()
             res.send(result)
