@@ -40,7 +40,7 @@ async function run() {
         })
         //middle for jwt
         const verifyToken = (req, res, next) => {
-            
+
             // console.log('Inside verify token', req.body)
             if (!req.headers.authorization) {
                 return res.status(401).send({ message: 'forbidden access' })
@@ -79,6 +79,7 @@ async function run() {
 
             // insert email if user doesnt exists: 
             // you can do this many ways (1. email unique, 2. upsert 3. simple checking)
+            const user = req.body;
             const query = { email: user.email }
             const existingUser = await userCollection.findOne(query);
             if (existingUser) {
@@ -87,8 +88,8 @@ async function run() {
             const result = await userCollection.insertOne(user);
             res.send(result);
         });
-        app.get('/users',verifyToken, async (req, res) => {
-            
+        app.get('/users', verifyToken, async (req, res) => {
+
             const cursor = userCollection.find();
             const result = await cursor.toArray()
             res.send(result)
@@ -110,6 +111,19 @@ async function run() {
             const result = await userCollection.updateOne(filter, updateDoc)
             res.send(result)
 
+        })
+        app.get('/user/admin/:email', verifyToken, async (req, res) => {
+            const email = req.params.email;
+            if (email !== req.decoded.email) {
+                return res.status(403).send({ message: 'unauthorized access' })
+            }
+            const query = { email: email };
+            const user = await userCollection.findOne(email)
+            let admin = false
+            if (user) {
+                admin = user?.role === 'admin'
+            }
+            res.send({ admin })
         })
         //
         app.get('/carts', async (req, res) => {
