@@ -40,13 +40,12 @@ async function run() {
         })
         //middle for jwt
         const verifyToken = (req, res, next) => {
-            console.log(req.headers.authorization)
+            
             // console.log('Inside verify token', req.body)
             if (!req.headers.authorization) {
                 return res.status(401).send({ message: 'forbidden access' })
             }
             const token = req.headers.authorization.split(' ')[1]
-            console.log(req.headers.authorization)
             jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
                 if (err) {
                     return res.status(401).send({ message: 'forbidden access' })
