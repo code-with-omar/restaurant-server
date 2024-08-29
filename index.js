@@ -85,7 +85,7 @@ async function run() {
         })
         // users related api
 
-        app.post('/users',verifyAdmin, async (req, res) => {
+        app.post('/users', async (req, res) => {
 
             // insert email if user doesnt exists: 
             // you can do this many ways (1. email unique, 2. upsert 3. simple checking)
@@ -104,13 +104,13 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-        app.delete('/users/:id', async (req, res) => {
+        app.delete('/users/:id',verifyToken,verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await userCollection.deleteOne(query)
             res.send(result)
         })
-        app.patch('/users/admin/:id', async (req, res) => {
+        app.patch('/users/admin/:id',verifyToken,verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
             const updateDoc = {
@@ -136,7 +136,7 @@ async function run() {
             res.send({ admin })
         })
         //
-        app.get('/carts', async (req, res) => {
+        app.get('/carts',verifyToken, async (req, res) => {
             const email = req.query.email
             const query = { email: email }
             const cursor = cartsCollection.find(query);
@@ -146,13 +146,13 @@ async function run() {
 
 
         // Cartts collection
-        app.post('/carts', async (req, res) => {
+        app.post('/carts',verifyToken, async (req, res) => {
             const cartItem = req.body;
             const result = await cartsCollection.insertOne(cartItem);
             res.send(result)
         })
 
-        app.delete('/carts/:id', async (req, res) => {
+        app.delete('/carts/:id',verifyToken, async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await cartsCollection.deleteOne(query)
