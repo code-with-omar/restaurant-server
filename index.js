@@ -46,12 +46,14 @@ async function run() {
                 return res.status(401).send({ message: 'unauthorized access' })
             }
             const token = req.headers.authorization.split(' ')[1]
-            console.log(token)
+            // console.log(token)
+
             jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
                 if (err) {
                     return res.status(401).send({ message: 'unauthorized access' })
                 }
                 req.decoded = decoded
+                // console.log(req.decoded)
                 next()
             })
         }
@@ -60,7 +62,8 @@ async function run() {
             const email = req.decoded.email
             const query = { email: email }
             const user = await userCollection.find(query).toArray()
-            const isAdmin = user?.role === 'admin'
+            const isAdmin = user[0]?.role === 'admin'
+            // console.log(user)
             if (!isAdmin) {
                 return res.status(403).send({ message: 'forbidden access' })
             }
@@ -76,6 +79,12 @@ async function run() {
         app.get('/menu', async (req, res) => {
             const cursor = menuCollection.find();
             const result = await cursor.toArray()
+            res.send(result)
+        })
+        // add menu by admin
+        app.post('/menu', async (req, res) => {
+            const menuItem = req.body;
+            const result = await menuCollection.insertOne(menuItem);
             res.send(result)
         })
         // get chef recommend collection
@@ -105,12 +114,13 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-        app.delete('/users/:id',verifyToken,verifyAdmin,async (req, res) => {
+        app.delete('/users/:id', verifyToken, verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await userCollection.deleteOne(query)
             res.send(result)
         })
+        // make admin by admin
         app.patch('/users/admin/:id', verifyToken, verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
@@ -123,6 +133,7 @@ async function run() {
             res.send(result)
 
         })
+        //check admin
         app.get('/users/admin/:email', verifyToken, async (req, res) => {
             const email = req.params.email;
             if (email !== req.decoded.email) {
@@ -172,6 +183,7 @@ run().catch(console.dir);
 
 app.get('/', (req, res) => {
     res.send('Hello I am from server')
+
 })
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
