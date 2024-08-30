@@ -82,7 +82,7 @@ async function run() {
             res.send(result)
         })
         // add menu by admin
-        app.post('/menu', async (req, res) => {
+        app.post('/menu', verifyToken, verifyAdmin, async (req, res) => {
             const menuItem = req.body;
             const result = await menuCollection.insertOne(menuItem);
             res.send(result)
@@ -155,7 +155,12 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result);
         })
-
+        // it seen all order by admin
+        app.get('/allCarts', verifyToken, verifyAdmin, async (req, res) => {
+            const cursor = cartsCollection.find();
+            const result = await cursor.toArray()
+            res.send(result)
+        })
 
         // Cartts collection
         app.post('/carts', async (req, res) => {
