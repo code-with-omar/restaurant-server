@@ -87,6 +87,14 @@ async function run() {
             const result = await menuCollection.insertOne(menuItem);
             res.send(result)
         })
+        // delete by admin
+        app.delete('/menu/:id', verifyToken, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await menuCollection.deleteOne(query);
+            res.send(result);
+        });
+        
         // get chef recommend collection
         app.get('/suggest', async (req, res) => {
             const cursor = chefRecommendCollection.find();
