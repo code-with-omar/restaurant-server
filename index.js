@@ -88,6 +88,22 @@ async function run() {
             const result = await menuCollection.findOne(query);
             res.send(result)
         })
+        // Update menu only admin
+        app.patch('/menu/:id',verifyToken,verifyAdmin, async (req, res) => {
+            const item = req.body
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const updateMenu = {
+                $set: {
+                    name: item.name,
+                    price: item.price,
+                    category: item.category,
+                    recipe: item.recipe
+                }
+            }
+            const result=await menuCollection.updateOne(filter,updateMenu)
+            res.send(result)
+        })
         // add menu by admin
         app.post('/menu', verifyToken, verifyAdmin, async (req, res) => {
             const menuItem = req.body;
