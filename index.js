@@ -89,7 +89,7 @@ async function run() {
             res.send(result)
         })
         // Update menu only admin
-        app.patch('/menu/:id',verifyToken,verifyAdmin, async (req, res) => {
+        app.patch('/menu/:id', verifyToken, verifyAdmin, async (req, res) => {
             const item = req.body
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
@@ -101,7 +101,7 @@ async function run() {
                     recipe: item.recipe
                 }
             }
-            const result=await menuCollection.updateOne(filter,updateMenu)
+            const result = await menuCollection.updateOne(filter, updateMenu)
             res.send(result)
         })
         // add menu by admin
