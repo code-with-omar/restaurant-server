@@ -141,9 +141,17 @@ async function run() {
             const result = await userCollection.insertOne(user);
             res.send(result);
         });
-        app.post('/reservation',verifyToken,async(req,res)=>{
-            const user =req.body
-            const result = await reservationCollection.insertOne(menuItem);
+        // user reservation
+        app.post('/reservation', verifyToken, async (req, res) => {
+            const reservations = req.body
+            const result = await reservationCollection.insertOne(reservations);
+            res.send(result)
+        })
+        // find users reservation
+        app.get('/reservation', async (req, res) => {
+            const user = req.body;
+            const query = { email: user.email }
+            const result = await reservationCollection.findOne(query).toArray();
             res.send(result)
         })
         app.get('/users', verifyToken, verifyAdmin, async (req, res) => {
