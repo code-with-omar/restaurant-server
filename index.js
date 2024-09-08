@@ -155,14 +155,14 @@ async function run() {
         //     const result = await cursor.toArray();
         //     res.send(result)
         // })
-        app.get('/reservation',verifyToken, async (req, res) => {
+        app.get('/reservation', verifyToken, async (req, res) => {
             const email = req.query.email
             const query = { email: email }
             const cursor = reservationCollection.find(query);
             const result = await cursor.toArray()
             res.send(result);
         })
-        app.delete('/reservation/:id',verifyToken,async(req,res)=>{
+        app.delete('/reservation/:id', verifyToken, async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await userCollection.deleteOne(query)
