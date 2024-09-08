@@ -165,7 +165,7 @@ async function run() {
         app.delete('/reservation/:id', verifyToken, async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
-            const result = await userCollection.deleteOne(query)
+            const result = await reservationCollection.deleteOne(query)
             res.send(result)
         })
         app.get('/users', verifyToken, verifyAdmin, async (req, res) => {
