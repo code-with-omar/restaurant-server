@@ -130,7 +130,7 @@ async function run() {
 
         app.post('/users', async (req, res) => {
 
-            // insert email if user doesnt exists: 
+            // insert email if user doesn't exists: 
             // you can do this many ways (1. email unique, 2. upsert 3. simple checking)
             const user = req.body;
             const query = { email: user.email }
@@ -148,11 +148,19 @@ async function run() {
             res.send(result)
         })
         // find users reservation
+        // app.get('/reservation', async (req, res) => {
+        //     const user = req.body;
+        //     const query = { email: user.email }
+        //     const cursor = await reservationCollection.findOne(query)
+        //     const result = await cursor.toArray();
+        //     res.send(result)
+        // })
         app.get('/reservation', async (req, res) => {
-            const user = req.body;
-            const query = { email: user.email }
-            const result = await reservationCollection.findOne(query).toArray();
-            res.send(result)
+            const email = req.query.email
+            const query = { email: email }
+            const cursor = reservationCollection.find(query);
+            const result = await cursor.toArray()
+            res.send(result);
         })
         app.get('/users', verifyToken, verifyAdmin, async (req, res) => {
 
