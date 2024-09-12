@@ -28,6 +28,7 @@ async function run() {
         // await client.connect();
         const userCollection = client.db("bistroDB").collection("users")
         const reviewCollection = client.db("bistroDB").collection("reviews")
+        const userReviewCollection = client.db("bistroDB").collection("userReviews")
         const menuCollection = client.db("bistroDB").collection("menu")
         const chefRecommendCollection = client.db("bistroDB").collection("chefMenu")
         const cartsCollection = client.db("bistroDB").collection("carts")
@@ -74,6 +75,12 @@ async function run() {
         app.get('/reviews', async (req, res) => {
             const cursor = reviewCollection.find();
             const result = await cursor.toArray()
+            res.send(result)
+        })
+        // user reviews individual product
+        app.post("/addReviews", verifyToken, async (req, res) => {
+            const review = req.body;
+            const result = await userReviewCollection.insertOne(review)
             res.send(result)
         })
         //Get menu
