@@ -169,6 +169,11 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result);
         })
+        app.get('/findAllReservation', async (req, res) => {
+            const cursor = reservationCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
+        })
         app.delete('/reservation/:id', verifyToken, async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
